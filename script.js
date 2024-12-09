@@ -8,13 +8,9 @@ const tileSize = 30;
 const rows = 20;
 const cols = 20;
 
-// Player properties
 let player = { x: 0, y: 0, size: tileSize - 4 };
-
-// Goal properties
 let goal = { x: cols - 1, y: rows - 1, size: tileSize - 4 };
 
-// Maze walls
 const maze = [
     "11111111111111111111",
     "10000000001111111111",
@@ -92,7 +88,7 @@ function movePlayer(direction) {
     if (direction === "ArrowLeft") newX--;
     if (direction === "ArrowRight") newX++;
 
-    if (!checkCollision(newX, newY)) {
+    if (newX >= 0 && newX < cols && newY >= 0 && newY < rows && !checkCollision(newX, newY)) {
         player.x = newX;
         player.y = newY;
     }
@@ -102,7 +98,9 @@ function movePlayer(direction) {
 }
 
 window.addEventListener("keydown", (e) => {
-    movePlayer(e.key);
+    if (e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "ArrowLeft" || e.key === "ArrowRight") {
+        movePlayer(e.key);
+    }
 });
 
 draw();
