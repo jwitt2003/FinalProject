@@ -88,6 +88,7 @@ function movePlayer(direction) {
     if (direction === "ArrowLeft") newX--;
     if (direction === "ArrowRight") newX++;
 
+    // Ensure the new position is within bounds and doesn't hit a wall
     if (newX >= 0 && newX < cols && newY >= 0 && newY < rows && !checkCollision(newX, newY)) {
         player.x = newX;
         player.y = newY;
