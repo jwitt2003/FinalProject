@@ -3,21 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maze Game</title>
+    <title>Fullscreen Maze Game</title>
     <style>
         body {
+            margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
             background-color: #f0f0f0;
         }
         canvas {
-            border: 2px solid black;
+            display: block;
             background-color: white;
+            border: 2px solid black;
         }
         .game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             display: none;
             flex-direction: column;
             align-items: center;
@@ -26,9 +30,7 @@
     </style>
 </head>
 <body>
-    <div id="game-container">
-        <canvas id="gameCanvas" width="400" height="400"></canvas>
-    </div>
+    <canvas id="gameCanvas"></canvas>
     <div class="game-over" id="gameOverScreen">
         <h1>Congratulations!</h1>
         <p>You completed all the levels!</p>
@@ -38,40 +40,57 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const gameOverScreen = document.getElementById('gameOverScreen');
-        const gameContainer = document.getElementById('game-container');
 
-        const square = { x: 20, y: 20, size: 20, speed: 20 };
+        let square = { x: 0, y: 0, size: 0, speed: 0 };
         let level = 0;
+        let tileSize, mazeWidth, mazeHeight;
 
         const mazes = [
             // Level 1
             [
-                [0, 0, 0, 1, 1, 1, 1, 1, 1, 1],
-                [1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
-                [1, 1, 0, 0, 0, 0, 0, 1, 1, 1],
-                [1, 1, 1, 1, 1, 1, 0, 1, 1, 1],
-                [1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 0]
+                [0, 0, 0, 1, 1],
+                [1, 1, 0, 1, 1],
+                [1, 1, 0, 0, 0],
+                [1, 1, 1, 1, 0],
+                [1, 1, 1, 1, 0]
             ],
             // Level 2
             [
-                [0, 0, 0, 1, 1, 1, 1, 1, 1, 1],
-                [1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
-                [1, 1, 0, 0, 0, 0, 1, 1, 1, 1],
-                [1, 1, 1, 1, 1, 0, 1, 1, 1, 1],
-                [1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                [0, 0, 0, 1, 1, 1, 1],
+                [1, 1, 0, 1, 1, 1, 1],
+                [1, 1, 0, 0, 0, 0, 1],
+                [1, 1, 1, 1, 1, 0, 1],
+                [1, 1, 1, 1, 1, 0, 0],
+                [1, 1, 1, 1, 1, 1, 1]
             ],
             // Level 3
             [
-                [0, 0, 0, 1, 1, 1, 1, 1, 1, 1],
-                [1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
-                [1, 1, 0, 0, 1, 1, 1, 1, 1, 1],
-                [1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-                [1, 1, 1, 0, 0, 0, 0, 0, 1, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                [0, 0, 0, 1, 1, 1, 1, 1],
+                [1, 1, 0, 1, 1, 1, 1, 1],
+                [1, 1, 0, 0, 1, 1, 1, 1],
+                [1, 1, 1, 0, 1, 1, 1, 1],
+                [1, 1, 1, 0, 0, 0, 0, 0],
+                [1, 1, 1, 1, 1, 1, 1, 1]
             ]
         ];
+
+        function resizeCanvas() {
+            const maze = mazes[level];
+            mazeHeight = maze.length;
+            mazeWidth = maze[0].length;
+            tileSize = Math.floor(Math.min(window.innerWidth / mazeWidth, window.innerHeight / mazeHeight));
+
+            canvas.width = tileSize * mazeWidth;
+            canvas.height = tileSize * mazeHeight;
+
+            square.size = tileSize;
+            square.speed = tileSize;
+            square.x = 0;
+            square.y = 0;
+
+            drawMaze();
+            drawSquare();
+        }
 
         function drawMaze() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -79,7 +98,7 @@
             for (let row = 0; row < maze.length; row++) {
                 for (let col = 0; col < maze[row].length; col++) {
                     ctx.fillStyle = maze[row][col] === 1 ? 'black' : 'white';
-                    ctx.fillRect(col * square.size, row * square.size, square.size, square.size);
+                    ctx.fillRect(col * tileSize, row * tileSize, tileSize, tileSize);
                 }
             }
         }
@@ -109,8 +128,8 @@
                     break;
             }
 
-            const col = Math.floor(newX / square.size);
-            const row = Math.floor(newY / square.size);
+            const col = Math.floor(newX / tileSize);
+            const row = Math.floor(newY / tileSize);
 
             if (maze[row] && maze[row][col] === 0) {
                 square.x = newX;
@@ -123,8 +142,7 @@
                     endGame();
                     return;
                 }
-                square.x = 20;
-                square.y = 20;
+                resizeCanvas();
             }
 
             drawMaze();
@@ -132,26 +150,25 @@
         }
 
         function endGame() {
-            gameContainer.style.display = 'none';
+            canvas.style.display = 'none';
             gameOverScreen.style.display = 'flex';
         }
 
         function restartGame() {
             level = 0;
-            square.x = 20;
-            square.y = 20;
-            gameContainer.style.display = 'flex';
+            canvas.style.display = 'block';
             gameOverScreen.style.display = 'none';
-            drawMaze();
-            drawSquare();
+            resizeCanvas();
         }
 
+        window.addEventListener('resize', resizeCanvas);
         document.addEventListener('keydown', moveSquare);
-        drawMaze();
-        drawSquare();
+
+        resizeCanvas();
     </script>
 </body>
 </html>
+
 
 
 
