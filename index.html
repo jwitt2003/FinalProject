@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Maze Game</title>
+    <title>Maze Game</title>
     <style>
         body {
             display: flex;
@@ -20,16 +20,16 @@
     </style>
 </head>
 <body>
-    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <canvas id="gameCanvas" width="500" height="500"></canvas>
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
-        const square = { x: 20, y: 20, size: 40, speed: 40 };
+        const square = { x: 10, y: 10, size: 20, speed: 20 };
         let level = 0;
 
         const mazes = [
-            // Level 1
+            // Level 1: Simple
             [
                 [0, 0, 0, 1, 1, 1, 1, 1, 1, 1],
                 [1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
@@ -38,7 +38,7 @@
                 [1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
                 [1, 1, 1, 1, 1, 1, 1, 1, 1, 0]
             ],
-            // Level 2
+            // Level 2: Medium
             [
                 [0, 0, 0, 1, 1, 1, 1, 1, 1, 1],
                 [1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
@@ -47,7 +47,7 @@
                 [1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
                 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
             ],
-            // Level 3
+            // Level 3: Hard
             [
                 [0, 0, 0, 1, 1, 1, 1, 1, 1, 1],
                 [1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
@@ -102,15 +102,14 @@
                 square.y = newY;
             }
 
-            // Check if the player has reached the end of the maze
             if (row === maze.length - 1 && col === maze[0].length - 1) {
                 level++;
                 if (level >= mazes.length) {
                     alert('Congratulations! You completed all levels!');
                     level = 0;
                 }
-                square.x = 20;
-                square.y = 20;
+                square.x = 10;
+                square.y = 10;
             }
 
             drawMaze();
@@ -123,4 +122,5 @@
     </script>
 </body>
 </html>
+
 
