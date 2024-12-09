@@ -98,10 +98,11 @@ function movePlayer(direction) {
     checkWin();
 }
 
-window.addEventListener("keydown", (e) => {
+document.addEventListener("keydown", (e) => {
     if (e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "ArrowLeft" || e.key === "ArrowRight") {
         movePlayer(e.key);
     }
 });
 
 draw();
+
