@@ -8,9 +8,11 @@ const tileSize = 30;
 const rows = 20;
 const cols = 20;
 
+// Player and Goal
 let player = { x: 0, y: 0, size: tileSize - 4 };
-const goal = { x: cols - 1, y: rows - 1, size: tileSize - 4 };
+let goal = { x: cols - 1, y: rows - 1, size: tileSize - 4 };
 
+// Maze Layout
 const maze = [
     "11111111111111111111",
     "10000000001111111111",
@@ -34,11 +36,12 @@ const maze = [
     "11111111111111111111",
 ];
 
+// Draw Functions
 function drawMaze() {
     for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
             if (maze[row][col] === "1") {
-                ctx.fillStyle = "#444"; // Wall color
+                ctx.fillStyle = "#444";
                 ctx.fillRect(col * tileSize, row * tileSize, tileSize, tileSize);
             }
         }
@@ -55,6 +58,7 @@ function drawGoal() {
     ctx.fillRect(goal.x * tileSize + 2, goal.y * tileSize + 2, goal.size, goal.size);
 }
 
+// Game Logic
 function checkCollision(x, y) {
     return maze[y]?.[x] === "1";
 }
@@ -79,24 +83,18 @@ function draw() {
     drawGoal();
 }
 
+// Movement
 function movePlayer(direction) {
     let newX = player.x;
     let newY = player.y;
 
-    // Update player position based on key pressed
     if (direction === "ArrowUp") newY--;
     if (direction === "ArrowDown") newY++;
     if (direction === "ArrowLeft") newX--;
     if (direction === "ArrowRight") newX++;
 
-    // Check if the new position is valid
-    if (
-        newX >= 0 &&
-        newX < cols &&
-        newY >= 0 &&
-        newY < rows &&
-        !checkCollision(newX, newY)
-    ) {
+    // Ensure the new position is within bounds and doesn't hit a wall
+    if (newX >= 0 && newX < cols && newY >= 0 && newY < rows && !checkCollision(newX, newY)) {
         player.x = newX;
         player.y = newY;
     }
@@ -105,14 +103,12 @@ function movePlayer(direction) {
     checkWin();
 }
 
-// Handle keyboard input for movement
+// Add Event Listener
 document.addEventListener("keydown", (e) => {
-    const validKeys = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
-    if (validKeys.includes(e.key)) {
+    if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
         movePlayer(e.key);
     }
 });
 
-// Initial draw
+// Initialize Game
 draw();
-
